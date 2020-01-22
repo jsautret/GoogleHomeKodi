@@ -57,4 +57,6 @@
     "kodiHibernate": "hibernation",
     "kodiReboot": "reboot",
     "kodiSuspend": "suspend"
+    "stopTasks": "(stop|arrêtes?) (les )?taches"
+    "startTasks": "(lances?|démarres?) (les )?taches"
 }

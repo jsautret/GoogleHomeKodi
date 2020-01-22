@@ -4,6 +4,7 @@ const { wordsToNumbers } = require('words-to-numbers');
 const youtubeSearch = require('youtube-search');
 const Fuse = require('fuse.js');
 const KodiWindows = require('./kodi-connection/windows.js')();
+const { exec } = require('child_process');
 
 const AUDIO_PLAYER = 0;
 const VIDEO_PLAYER = 1;
@@ -1460,4 +1461,33 @@ exports.listRoutes = function(request, response) {
 
     response.set('Content-Type', 'text/json');
     response.send(routes);
+};
+
+
+exports.stopTasks = (request, response) => { // eslint-disable-line no-unused-vars
+
+    exec('/usr/local/bin/stop_tasks.sh', (error, stdout, stderr) => {
+	if (error) {
+	    // node couldn't execute the command
+	    return;
+	}
+	console.log('Stop tasks');
+	console.log(`stderr: ${stderr}`);
+    });
+
+    return;
+};
+
+exports.startTasks = (request, response) => { // eslint-disable-line no-unused-vars
+
+    exec('/usr/local/bin/start_tasks.sh', (error, stdout, stderr) => {
+	if (error) {
+	    // node couldn't execute the command
+	    return;
+	}
+	console.log('Start tasks');
+	console.log(`stderr: ${stderr}`);
+    });
+
+    return;
 };
