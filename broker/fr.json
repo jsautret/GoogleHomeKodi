@@ -1,4 +1,6 @@
 {
+    "stopTasks": "(stop|arrêtes?) (les )?taches",
+    "startTasks": "(lances?|démarres?) (les )?taches",
     "kodiPlayRandomMovie": "(démarre|lance|joue|mets) (aléatoirement|au hasard) un film(( de | d' *| pour | )?(?<genre>.+ )?( (qui date )?de l'année) (?<year>\\d+))?",
     "kodiPlayTvshow": "(démarre|lance|joue|mets) (un |l')?épisode (de )?(?<q>.+)",
     "kodiPlayRecentEpisodeHandler": "(démarre|lance|joue) (un )?nouvel épisode",
@@ -56,7 +58,5 @@
     "kodiShutdown": "shutdown|arrêt total",
     "kodiHibernate": "hibernation",
     "kodiReboot": "reboot",
-    "kodiSuspend": "suspend",
-    "stopTasks": "(stop|arrêtes?) (les )?taches",
-    "startTasks": "(lances?|démarres?) (les )?taches"
+    "kodiSuspend": "suspend"
 }
