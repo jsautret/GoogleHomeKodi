@@ -60,7 +60,7 @@ const matchPhraseToEndpoint = (request) => {
         throw new Error(`Missing mandatory query parameter 'phrase'`);
     }
 
-    let phrase = request.query.phrase.toLowerCase().trim();
+    let phrase = request.query.phrase.toLocalelowercase('UTF-8');
     let language = request.query.lang || `en`;
 
     if (lastUsedLanguage !== language) {
