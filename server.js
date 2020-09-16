@@ -1,17 +1,15 @@
 'use strict'; // eslint-disable-line strict
-// server.js
-// where your node app starts
 
-// init project
 const express = require('express');
-const bodyParser = require('body-parser');
 const app = express();
 const Helper = require('./helpers.js');
 const Broker = require('./broker.js');
+const bodyParser = require('body-parser');
 const LoadConfig = require('./config.js');
-const config = new LoadConfig();
-const ResponseException = require('./exceptions.js').ResponseException;
 const SettingsApp = require('./apps/settings.js');
+const ResponseException = require('./exceptions.js').ResponseException;
+
+const config = new LoadConfig();
 
 const handleError = (error, request, response, next) => { // eslint-disable-line no-unused-vars
 
@@ -31,8 +29,8 @@ const handleError = (error, request, response, next) => { // eslint-disable-line
 
     try {
         let userRequest = request.query ? request.query.q : '';
-        Helper.kodiShowError(request, response, userRequest + ': ' + publicError);
-    } catch(err) {
+        Helper.kodiShowError(`${request} ${response} ${userRequest} : ${publicError}`);
+    } catch (err) {
         // swallow early error handling error
     }
 
@@ -43,13 +41,16 @@ const handleError = (error, request, response, next) => { // eslint-disable-line
 
 const exec = (action) => {
     return (request, response, next) => {
+        let route = request.route ? request.route.path : '';
+        console.log('==== BEGIN === route: ', route);
         action(request, response, next)
-        .then(() => {
-            if (!response.headersSent) {
-                response.send('OK');
-            }
-        })
-        .catch((error) => handleError(error, request, response, next));
+            .then(() => {
+                if (!response.headersSent) {
+                    response.send('OK');
+                }
+            })
+            .catch((error) => handleError(error, request, response, next))
+            .then(() => console.log('==== END === route: ', route));
     };
 };
 
@@ -169,9 +170,17 @@ app.all('/shuffleepisode', exec(Helper.kodiShuffleEpisodeHandler));
 // Parse request to watch all episodes of a show on shuffle
 app.all('/shuffleshow', exec(Helper.kodiShuffleShowHandler));
 
-// Parse request to watch a PVR channel by name
-// Request format:     http://[THIS_SERVER_IP_ADDRESS]/playpvrchannelbyname?q=[CHANNEL_NAME]
+// Deprecated! Use explicit TV or Radio Versions
 app.all('/playpvrchannelbyname', exec(Helper.kodiPlayChannelByName));
+// Deprecated! Use explicit TV or Radio Versions
+app.all('/playpvrchannelbynumber', exec(Helper.kodiPlayChannelByNumber));
+
+// TV
+app.all('/playtvchannelbyname', exec(Helper.kodiPlayTvChannelByName));
+app.all('/playtvchannelbynumber', exec(Helper.kodiPlayTvChannelByNumber));
+// Radio
+app.all('/playradiochannelbyname', exec(Helper.kodiPlayRadioChannelByName));
+app.all('/playradiochannelbynumber', exec(Helper.kodiPlayRadioChannelByNumber));
 
 // Parse request to search for a youtube video. The video will be played using the youtube addon.
 // Request format:     http://[THIS_SERVER_IP_ADDRESS]/playyoutube?q=[TV_SHOW_NAME]
@@ -181,9 +190,6 @@ app.all('/playyoutube', exec(Helper.kodiPlayYoutube));
 
 app.all('/searchyoutube', exec(Helper.kodiSearchYoutube));
 
-// Parse request to watch a PVR channel by number
-// Request format:     http://[THIS_SERVER_IP_ADDRESS]/playpvrchannelbynumber?q=[CHANNEL_NUMBER]
-app.all('/playpvrchannelbynumber', exec(Helper.kodiPlayChannelByNumber));
 
 // Parse request to test the end2end kodi connectivity.
 // Request format:     http://[THIS_SERVER_IP_ADDRESS]/koditestconnection
@@ -284,7 +290,7 @@ app.all('/playercontrol', exec(Helper.playercontrol));
 
 app.all('/playfavourite', exec(Helper.kodiOpenFavourite));
 
-//broker for parsing all phrases
+// broker for parsing all phrases
 app.all('/broker', exec(Broker.processRequest));
 
 app.use('/settings', SettingsApp.build(exec));
