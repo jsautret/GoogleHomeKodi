@@ -3,6 +3,7 @@
 const Helper = require('./helpers.js');
 const path = require('path');
 const fs = require('fs');
+const utf8 = require('utf8');
 
 let lastUsedLanguage = ``;
 let localizedPhrases = null;
@@ -60,7 +61,7 @@ const matchPhraseToEndpoint = (request) => {
         throw new Error(`Missing mandatory query parameter 'phrase'`);
     }
 
-    let phrase = request.query.phrase.toLocalelowercase('UTF-8');
+    let phrase = utf8.decode(request.query.phrase).toLocaleLowerCase();
     let language = request.query.lang || `en`;
 
     if (lastUsedLanguage !== language) {
