@@ -926,6 +926,13 @@ exports.kodiDecreaseVolume = (request, response) => { // eslint-disable-line no-
 exports.kodiActivateTv = (request, response) => { // eslint-disable-line no-unused-vars
     console.log('Activate TV request received');
 
+    exec('/usr/local/bin/tv_cec.sh on', (error, stdout, stderr) => {
+	if (!error) {
+	    console.log('Stop tasks');
+	    console.log(`stderr: ${stderr}`);
+	}
+    });
+
     let Kodi = request.kodi;
     const params = {
         addonid: 'script.json-cec',
@@ -939,6 +946,13 @@ exports.kodiActivateTv = (request, response) => { // eslint-disable-line no-unus
 
 exports.kodiStandbyTv = (request, response) => { // eslint-disable-line no-unused-vars
     console.log('Standby TV request received');
+
+    exec('/usr/local/bin/tv_cec.sh off', (error, stdout, stderr) => {
+	if (!error) {
+	    console.log('TV off');
+	    console.log(`stderr: ${stderr}`);
+	}
+    });
 
     let Kodi = request.kodi;
     const params = {
@@ -1164,7 +1178,7 @@ const kodiPlayChannelByNumber = (request, response, channelGroupId) => { // esli
     tryActivateTv(request, response);
 
     let requestedChannel = getRequestedNumberOrDefaulValue(request, -1).toString();
-    
+
     if (requestedChannel === '-1') {
         return kodiPlayChannelByName(request, response, channelGroupId);
     }
